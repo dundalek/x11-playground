@@ -1,0 +1,3 @@
+[submodule "proto/randrproto"]
+	path = proto/randrproto
+	url = git://anongit.freedesktop.org/xorg/proto/randrproto

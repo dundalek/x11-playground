@@ -1,0 +1,160 @@
+
+1. General
+
+Paragraph
+
+1.1 Unordered list
+
+• Projective Transforms. The implementation work for general rotation
+  support made it trivial to add full projective transformations. These
+  can be used to scale the screen up/down as well as perform projector
+  keystone correct or other effects.
+
+• Panning. It was removed with RandR 1.2 because the old semantics didn't
+  fit any longer. With RandR 1.3 panning can be specified per crtc.
+
+1.2 Ordered list
+
+1) Screen transforms. The software transform code in the X server
+   uses a shadow frame buffer, adding another copy to every graphics
+   operation. Worse, the server has no idea about when clients are
+   done drawing a frame, so the user gets additional latency and
+   judder.
+
+   The goal is to move this operation out to the compositing manager
+   which already deals with an extra copy of the frame buffer for
+   many operations. Have the compositing manager create and draw to a
+   separate pixmap for scanout. It can perform whatever transforms
+   are required to get the image in the right orientation for the
+   user.
+
+2) Hardware scanout engine size limits. With a single scanout buffer
+   for the entire screen, it's possible for the user to ask for a
+   configuration which requires that scanout buffer to be larger than
+   the hardware is capable of scanning out from. Again, having the
+   compositing manager create a pixmap for each CRTC will allow for
+   any configuration where monitor position within the virtual space
+   isn't limited by the scanout limits.
+
+1.3 Definition list
+
+Output
+	A value for an OUTPUT argument does not name a defined OUTPUT.
+CRTC
+	A value for a CRTC argument does not name a defined CRTC.
+Mode
+	A value for a MODE argument does not name a defined MODE.
+    
+2. Protocol specific
+
+2.1 Calls Informal
+
+┌───
+    RRQueryVersion
+	client-major-version:	CARD32
+	client-minor-version:	CARD32
+      ▶
+	major-version:		CARD32
+	minor-version:		CARD32
+└───
+
+2.2 Calls formal
+
+┌───
+    RRQueryVersion
+
+	1	CARD8			major opcode
+	1	0			RandR opcode
+	2	3			length
+	4	CARD32			major version
+	4	CARD32			minor version
+      ▶
+	1	1			Reply
+	1				unused
+	2	CARD16			sequence number
+	4	0			reply length
+	1	CARD32			major version
+	1	CARD32			minor version
+└───
+
+2.3 Enums
+
+┌───
+    ROTATION
+	0x0001	Rotate_0
+	0x0002	Rotate_90
+	0x0004	Rotate_180
+	0x0008	Rotate_270
+	0x0010	Reflect_X
+	0x0020	Reflect_Y
+└───
+
+2.4 Types
+
+┌───
+    MODEINFO (32)				Added in version 1.2
+	4	CARD32		id
+	2	CARD16		width in pixels
+	2	CARD16		height in pixels
+	4	CARD32		dot clock
+	2	CARD16		h sync start
+	2	CARD16		h sync end
+	2	CARD16		h total
+	2	CARD16		h skew
+	2	CARD16		v sync start
+	2	CARD16		v sync end
+	2	CARD16		v total
+	2	CARD16		name length
+	4	SETofMODEFLAG	mode flags
+└───
+
+2.5 Structures Informal
+
+MODEINFO { id: MODE
+	   name: STRING
+	   width, height: CARD16
+	   dotClock: CARD32
+	   hSyncStart, hSyncEnd, hTotal, hSkew: CARD16
+	   vSyncStart, vSyncEnd, vTotal: CARD16
+	   modeFlags: SETofMODEFLAG }
+
+2.6 Strings
+
+'pending'
+
+2.7 Properties
+
+"Backlight"			aka RR_PROPERTY_BACKLIGHT
+Type:			int32
+Flags:			-
+Range/List:		0-x (driver specific)
+
+2.8 Tables
+
+Property			Immutable	Mandatory since
+────────			─────────	───────────────
+CloneList			yes		not mandatory
+CompatibilityList		yes		not mandatory
+ConnectorNumber			yes: static	not mandatory
+ConnectorType			yes: static	RandR 1.3
+SignalFormat			no		RandR 1.3
+SignalProperties		no		not mandatory
+
+
+A.1 Appendix header
+
+A.1.1 Diagrams
+
+  ┌────────────────────────────────┬──────────┐
+  ┏━━━━━━━┳───────────────┐       ╔════════╗ ╔════════╗
+  ┃   1   ┃               │       ║   A    ║ ║   B    ║
+  ┃   ┏━━━╋━━━━━━━━━━━━━━━┫       ║        ║ ║        ║
+  ┣━━━╋━━━┛               ┃       ╚════════╝ ╚════════╝
+  │   ┃         2         ┃─────────────────┐
+  │   ┃                   ┃        ╔═══════════════════╗
+  │   ┃                   ┃        ║                   ║
+  │   ┗━━━━━━━━━━━━━━━━━━━┫        ║        C          ║
+  └───────────────────────┘        ║                   ║
+  ┌──────┐  ┏━━━━┓  ╔══════╗       ║                   ║
+  │screen│  ┃CRTC┃  ║output║       ╚═══════════════════╝
+  └──────┘  ┗━━━━┛  ╚══════╝
