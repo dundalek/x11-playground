@@ -18,11 +18,14 @@ start = blanklines? nodes:node+ {return nodes; }
 
 node
   = Header
-  / CallDefinitionInformal
+  / Definition
+  / Para
+
+Definition
+  =  CallDefinitionInformal
   / CallDefinitionFormal
   / EnumDefinition
   / TypeDefinition
-  / Para
 
 Header
   = ([A-Z] '.')? num:HeaderNumber c:line blanklines { return {
@@ -41,14 +44,14 @@ CallDefinitionInformal
   = '┌───' blanklinex
     _ name:TypeName description:Description blanklinex
     args:InformalTypeParam+
-    CallParamSeparator
-    returns:InformalTypeParam+
+    returns:(CallParamSeparator
+    InformalTypeParam+)?
     '└───' blanklines? {return {
         t: 'CallInformal',
         name: name,
         description: description,
         args: args,
-        returns: returns
+        returns: returns ? returns[1] : []
       };}
 
 CallDefinitionFormal
@@ -118,9 +121,9 @@ Description
   = NonLineTerminator* { return text().trim(); }
 
 Para "paragraph"
-  = l:line+ blanklines { return {t: 'Para', c: l.join('')}; }
+  = l:line+ (&Definition / blanklines) { return {t: 'Para', c: l.join('')}; }
 
-line = NonLineTerminator+ EOL { return text(); }
+line = !Definition NonLineTerminator+ EOL { return text(); }
 
 blanklinex
   = ((WhiteSpace / '❧')* LineTerminator)+
