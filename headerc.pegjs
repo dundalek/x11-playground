@@ -1,44 +1,58 @@
 
 start
-  = Header
-
-Header
-  = (__ Node)* __
+  = nodes:(__ Node)* __ { return nodes.map(function(n) { return n[1]; }); }
 
 Node
-  = '!#endif' Preprocessor
+  = Preprocessor
   / Typedef
-  / FieldDef
-  
+
 Typedef
-  = __ 'typedef' __ (StructureDef / Identifier) __ Identifier? __ ';'
+  = __ 'typedef' __ def:(StructureDef / SimpleDef)  __ ';' { return def; }
 
 Preprocessor
-  = PreIf
-  / '#include' _ NonLineTerminator+ _ LineTerminator
-  / '#' [a-z]+ _ Identifier _ NonLineTerminator* _ LineTerminator
+  = DefineDirective
+  / GeneralDirective
+  
+DefineDirective
+  = '#define' _ ident:Identifier _ value:NonLineTerminator* _ (LineTerminator / EOF) { return {
+    type: 'Directive',
+    directive: 'define',
+    name: ident,
+    value: value.join('')
+  };}
 
-PreIf
-  = ('#ifdef' / '#ifndef') _ Identifier _ LineTerminator
-    (Header LineTerminator '#else' _ LineTerminator)?
-    Header LineTerminator '#endif' _ LineTerminator
-
-IfKeyword
-  = '#' ('else' 'elif' 'endif')
+GeneralDirective
+  = '#' directive:[a-z]+ _ value:NonLineTerminator* _ (LineTerminator / EOF) { return {
+    type: 'Directive',
+    directive: directive.join(''),
+    value: value.join('')
+  };}
 
 Identifier
-  = [_A-Za-z] [_A-Za-z0-9]* {return text()}
+  = [_A-Za-z] [_A-Za-z0-9]* { return text(); }
+
+SimpleDef
+  = idents:(__ Identifier)+ { return {
+      type: 'TypedefDecl',
+      name: idents[idents.length-1][1],
+      value: idents.slice(0, -1).map(function(i) { return i[1]; })
+    };}
 
 StructureDef
-  = __ 'struct' (__ Identifier?) __ '{'
-    FieldDef+
-    __ '}' 
+  = __ 'struct' altName:(__ Identifier)? __ '{'
+    fields:FieldDef+
+    __ '}' __ name:Identifier? { return {
+      type: 'RecordDecl',
+      fields: fields,
+      name: name,
+      altName: altName && altName[1]
+    };}
 
 FieldDef
-  = __ Identifier (__ Identifier)+ __ ';'
+  = def:SimpleDef __ ';' { return def; }
 
 __
-  = (WhiteSpace / LineTerminatorSequence / Comment / Preprocessor)*
+  = (WhiteSpace / LineTerminatorSequence / Comment)*
 
 _
   = (WhiteSpace / MultiLineCommentNoLineTerminator)*
