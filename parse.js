@@ -1,5 +1,6 @@
 
 var fs = require('fs');
+var yaml = require('js-yaml');
 var PEG = require("pegjs");
 
 var grammar = fs.readFileSync('proto.pegjs', 'utf-8');
@@ -19,6 +20,7 @@ var troublemakers = result.filter(x => x.t === 'Para' && x.c.match(/┌───
 console.log('Troublemakers: ' + troublemakers.length);
 console.log(troublemakers);
 
+fs.writeFile('notes.yml', yaml.dump(d.map(function(x) {return {name: x.name, desc: ''}})));
 
 // console.log(result);
 fs.writeFileSync('out.json', JSON.stringify(result, null, 2));

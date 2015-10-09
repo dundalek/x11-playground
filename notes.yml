@@ -1,0 +1,131 @@
+- name: RRQueryVersion
+  desc: 'Find out which version of the protocol the server supports'
+- name: RRSelectInput
+  desc: 'Subscribe to receive change events'
+
+
+- name: RRSetScreenConfig
+  desc: 'Set configuration of the screen: size, rotation and rate'
+- name: RRGetScreenInfo
+  desc: 'Get current and available configurations of the screen for a given window'
+- name: RRGetScreenSizeRange
+  desc: 'Returns the range of possible screen sizes'
+- name: RRSetScreenSize
+  desc: 'Sets the screen to the specified size'
+
+- name: RRGetScreenResources
+  desc: 'Returns the list of outputs, crtcs and modes of the screen for a given window'
+- name: RRGetScreenResourcesCurrent
+  desc: 'returns the list of outputs and crtcs connected to the screen for a given window'
+- name: RRSetOutputPrimary
+  desc: 'marks output as the primary output for the screen for a given window'
+- name: RRGetOutputPrimary
+  desc: 'Returns the primary output for the screen'
+- name: RRGetProviders
+  desc: 'returns the list of providers connected to the screen'
+- name: RRGetMonitors
+  desc: 'Returns the list of Monitors for the screen'
+
+
+- name: RRGetOutputInfo
+  desc: 'Returns information about the current and available configurations for a output'
+- name: RRListOutputProperties
+  desc: 'This request returns the atoms of properties currently defined on
+	the output'
+- name: RRQueryOutputProperty
+  desc: 'Get the values for an atom and output'
+- name: RRConfigureOutputProperty
+  desc: 'Set a property of an output'
+- name: RRChangeOutputProperty
+  desc: 'Change property - replace, prepend or append values'
+- name: RRDeleteOutputProperty
+  desc: 'Deletes output property'
+- name: RRGetOutputProperty
+  desc: 'Get value of a property'
+
+
+- name: RRCreateMode
+  desc: 'Create a new mode for ouputs on the screen for a given window'
+- name: RRDestroyMode
+  desc: 'Destroy user-defined mode'
+- name: RRAddOutputMode
+  desc: 'Assign a mode for an output'
+- name: RRDeleteOutputMode
+  desc: 'Remove mode from an output'
+
+
+- name: RRGetCrtcInfo
+  desc: 'Returns information about the current and available configurations for the specified crtc'
+- name: RRSetCrtcConfig
+  desc: 'Set config for a crtc - location winthin screen, mode, rotation, outputs'
+- name: RRGetCrtcGammaSize
+  desc: 'Returns the size of the gamma ramps used by crtc'
+- name: RRGetCrtcGamma
+  desc: 'Returns currently set gamma ramps for crtc - rgb value'
+- name: RRSetCrtcGamma
+  desc: 'Set gamma ramps - rgb'
+- name: RRSetCrtcTransform
+  desc: 'Set projection transform and filter for a crtc'
+- name: RRGetCrtcTransform
+  desc: 'returns the pending and current transforms for the specified CRTC'
+- name: RRGetPanning
+  desc: 'Get panning for a crtc'
+- name: RRSetPanning
+  desc: 'Set panning for a crtc'
+
+
+- name: RRGetProviderInfo
+  desc: 'Get capabilities of the specified provider, its provided outputs and crtcs'
+- name: RRSetProviderOffloadSink
+  desc: 'sets the offload sink for this provider to the
+	specified provider'
+- name: RRSetProviderOutputSource
+  desc: 'sets the output source for this provider to the specified provider'
+- name: RRListProviderProperties
+  desc: ''
+- name: RRQueryProviderProperty
+  desc: ''
+- name: RRConfigureProviderProperty
+  desc: ''
+- name: RRChangeProviderProperty
+  desc: ''
+- name: RRDeleteProviderProperty
+  desc: ''
+- name: RRGetProviderProperty
+  desc: ''
+
+
+- name: RRSetMonitor
+  desc: 'Create a new monitor. Any existing Monitor of the same name is deleted'
+- name: RRDeleteMonitor
+  desc: ''
+
+
+- name: RRScreenChangeNotify
+  desc: 'This event is generated whenever the screen configuration is changed and sent to requesting clients'
+- name: RROutputChangeNotify
+  desc: ''
+- name: RRCrtcChangeNotify
+  desc: ''
+- name: RRProviderChangeNotify
+  desc: ''
+- name: RRResourceChangeNotify
+  desc: ''
+
+
+- name: ROTATION
+  desc: ''
+- name: RRSELECTMASK
+  desc: ''
+- name: RRCONFIGSTATUS
+  desc: ''
+- name: MODEINFO
+  desc: ''
+- name: MODEFLAG
+  desc: ''
+- name: CONNECTION
+  desc: ''
+- name: PROVIDER_CAPS
+  desc: ''
+- name: MONITORINFO
+  desc: ''
